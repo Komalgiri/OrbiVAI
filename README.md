@@ -1,6 +1,15 @@
 # CodePods 🚀
 
-From GitHub activity to AI-powered team execution.
+<div align="center">
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js" />
+  <img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express" />
+  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+</div>
+<br />
+
+> **From GitHub activity to AI-powered team execution.**
 
 CodePods is an AI-assisted collaboration platform designed to help small engineering teams plan projects, organize development work, understand team activity, and turn progress into actionable insights.
 
