@@ -46,13 +46,13 @@ const HowItWorks = () => {
                         Mastering the <span className="text-primary">Lifecycle</span>
                     </motion.h2>
                     <p className="text-muted text-lg max-w-2xl mx-auto uppercase tracking-widest font-bold">
-                        The CodePodAI workflow engineered for precision.
+                        The OrbiVAI workflow engineered for precision.
                     </p>
                 </div>
 
                 <div className="relative">
                     {/* Connecting Line (Desktop) */}
-                    <div className="hidden lg:block absolute top-1/2 left-0 w-full h-0.5 bg-white/5 -translate-y-1/2 z-0" />
+                    <div className="hidden lg:block absolute top-1/2 left-0 w-full h-0.5 bg-background-border -translate-y-1/2 z-0" />
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
                         {steps.map((step, idx) => (
@@ -64,10 +64,10 @@ const HowItWorks = () => {
                                 transition={{ delay: idx * 0.1 }}
                                 className="group flex flex-col items-center text-center"
                             >
-                                <div className={`w-20 h-20 rounded-3xl ${step.bg} ${step.color} flex items-center justify-center text-3xl mb-8 border border-white/5 group-hover:scale-110 transition-transform duration-500 shadow-xl`}>
+                                <div className={`w-20 h-20 rounded-3xl ${step.bg} ${step.color} flex items-center justify-center text-3xl mb-8 border border-background-border group-hover:scale-110 transition-transform duration-500 shadow-xl`}>
                                     {step.icon}
                                 </div>
-                                <h3 className="text-xl font-bold mb-4 text-white group-hover:text-primary transition-colors">
+                                <h3 className="text-xl font-bold mb-4 text-text-primary group-hover:text-primary transition-colors">
                                     {step.title}
                                 </h3>
                                 <p className="text-muted text-sm leading-relaxed">

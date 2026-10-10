@@ -62,19 +62,19 @@ const Features = () => {
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1 }}
               whileHover={{ y: -5 }}
-              className="relative group p-8 rounded-[2rem] border border-white/5 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/10 transition-all duration-300"
+              className="relative group p-8 rounded-[2rem] border border-background-border bg-background-surface backdrop-blur-sm hover:bg-primary/5 hover:border-primary/20 transition-all duration-300"
             >
               <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center text-white mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                 {feature.icon}
               </div>
-              <h3 className="text-xl font-bold mb-4 text-foreground group-hover:text-primary transition-colors">
+              <h3 className="text-xl font-bold mb-4 text-text-primary group-hover:text-primary transition-colors">
                 {feature.title}
               </h3>
               <p className="text-muted leading-relaxed text-sm">
                 {feature.description}
               </p>
 
-              <div className="absolute top-4 right-4 text-white/5 font-black text-6xl pointer-events-none select-none">
+              <div className="absolute top-4 right-4 text-text-primary/5 font-black text-6xl pointer-events-none select-none">
                 0{idx + 1}
               </div>
             </motion.div>

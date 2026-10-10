@@ -1,4 +1,4 @@
-# CodePods 🚀
+# OrbiVAI 
 
 <div align="center">
   <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
@@ -11,13 +11,13 @@
 
 > **From GitHub activity to AI-powered team execution.**
 
-CodePods is an AI-assisted collaboration platform designed to help small engineering teams plan projects, organize development work, understand team activity, and turn progress into actionable insights.
+OrbiVAI is an AI-assisted collaboration platform designed to help small engineering teams plan projects, organize development work, understand team activity, and turn progress into actionable insights.
 
 It brings together project workspaces called Pods, GitHub integration, AI-generated development roadmaps, task management, team activity tracking, and developer rewards in one workspace.
 
-Instead of managing project plans, assignments, development activity, and team progress in disconnected places, CodePods aims to create a more connected development workflow.
+Instead of managing project plans, assignments, development activity, and team progress in disconnected places, OrbiVAI aims to create a more connected development workflow.
 
-- **Live application:** [https://codepod-six.vercel.app](https://codepod-six.vercel.app/)
+- **Live application:** [https://orbivai-six.vercel.app](https://orbivai-six.vercel.app/)
 - **Repository:** [https://github.com/Komalgiri/codepods-backend](https://github.com/Komalgiri/codepods-backend)
 
 ---
@@ -26,7 +26,7 @@ Instead of managing project plans, assignments, development activity, and team p
 - [The Problem](#-the-problem)
 - [Our Approach](#-our-approach)
 - [Core Features](#-core-features)
-- [How CodePods Works](#-how-codepods-works)
+- [How OrbiVAI Works](#-how-codepods-works)
 - [Architecture](#-architecture)
 - [Technology Stack](#-technology-stack)
 - [Database Design](#-database-design)
@@ -55,12 +55,12 @@ This creates several challenges:
 - **Generic planning:** Project roadmaps often require considerable manual effort before they become useful.
 - **Low engagement:** Small teams and collaborative learning groups may benefit from visible progress and recognition.
 
-CodePods explores how AI-assisted planning, GitHub activity, collaborative workspaces, and transparent progress tracking can help address these challenges.
+OrbiVAI explores how AI-assisted planning, GitHub activity, collaborative workspaces, and transparent progress tracking can help address these challenges.
 
 ---
 
 ## 💡 Our Approach
-CodePods is built around the idea that planning, execution, and team progress should be connected.
+OrbiVAI is built around the idea that planning, execution, and team progress should be connected.
 
 A team creates a Pod for a project, brings its members together, connects GitHub, organizes tasks, and uses AI-assisted planning to establish a development direction.
 
@@ -82,7 +82,7 @@ The long-term goal is to reduce the gap between what a team intends to build and
 ## ✨ Core Features
 
 ### 1. Collaborative Pods
-Pods are the central collaboration unit in CodePods. Each Pod represents a project or collaborative engineering effort.
+Pods are the central collaboration unit in OrbiVAI. Each Pod represents a project or collaborative engineering effort.
 
 The data model supports:
 - Pod names and descriptions.
@@ -96,7 +96,7 @@ The data model supports:
 The backend includes membership and role-management endpoints, while the frontend includes Pod creation, exploration, overview, and task-board pages.
 
 ### 2. GitHub Integration
-CodePods connects user accounts with GitHub to bring development activity into the collaboration workflow.
+OrbiVAI connects user accounts with GitHub to bring development activity into the collaboration workflow.
 
 The integration includes:
 - GitHub OAuth login and account linking.
@@ -110,7 +110,7 @@ The integration includes:
 The backend uses GitHub API access through Octokit and Axios. The current implementation includes repository and commit synchronization, with the service structured to support additional event types. The accuracy and completeness of this synchronization depend on the current API implementation, OAuth permissions, and pagination handling.
 
 ### 3. AI-Powered Development Roadmaps
-CodePods integrates the Google Gemini API to generate strategic project plans.
+OrbiVAI integrates the Google Gemini API to generate strategic project plans.
 
 The roadmap generation process can use:
 - Project name and description.
@@ -140,7 +140,7 @@ The task model currently supports three statuses: `pending`, `in-progress`, `don
 The frontend includes a task board and AI planning interface intended to help users move from generated plans to actionable work.
 
 ### 5. Developer Rewards and Gamification
-CodePods includes a reward system intended to recognize contributions and make progress more visible.
+OrbiVAI includes a reward system intended to recognize contributions and make progress more visible.
 
 The current data model supports:
 - Reward points.
@@ -169,7 +169,7 @@ Task completion logic records completion times and contributes to metrics such a
 *These metrics are intended to help teams understand execution patterns. They should be interpreted as operational signals, not definitive measures of an individual's ability or performance.*
 
 ### 7. Notifications
-CodePods has a notification model and backend routes for delivering application notifications.
+OrbiVAI has a notification model and backend routes for delivering application notifications.
 
 Notifications can include a title, message, type, optional destination link, read status, and creation time. For example, the task controller creates a notification when a task is assigned to another user.
 
@@ -187,7 +187,7 @@ The frontend includes authentication screens, a GitHub connection flow, and prot
 
 ---
 
-## 🔄 How CodePods Works
+## 🔄 How OrbiVAI Works
 The following diagram describes the intended high-level workflow.
 
 ```mermaid
@@ -209,7 +209,7 @@ flowchart TD
 Imagine a small team building a SaaS application.
 1. The team creates a Pod called "Customer Portal".
 2. The team connects its GitHub accounts and relevant repository.
-3. CodePods uses the project description, team information, activity, and existing tasks to generate a suggested roadmap.
+3. OrbiVAI uses the project description, team information, activity, and existing tasks to generate a suggested roadmap.
 4. The team reviews the roadmap and creates tasks for frontend development, API implementation, and testing.
 5. Members update task statuses as the work progresses.
 6. GitHub activity is synchronized to the platform.
@@ -219,7 +219,7 @@ Imagine a small team building a SaaS application.
 ---
 
 ## 🏗️ Architecture
-CodePods is organized as a full-stack application with separate frontend and backend applications.
+OrbiVAI is organized as a full-stack application with separate frontend and backend applications.
 
 ```mermaid
 flowchart TB
@@ -547,7 +547,7 @@ For a persistent local database, Docker Compose defines a named PostgreSQL volum
 ---
 
 ## 🔒 Security Considerations
-CodePods contains several important security mechanisms, including JWT authentication, password hashing, Helmet, CORS restrictions, rate limiting, input-validation middleware, and GitHub-token encryption utilities.
+OrbiVAI contains several important security mechanisms, including JWT authentication, password hashing, Helmet, CORS restrictions, rate limiting, input-validation middleware, and GitHub-token encryption utilities.
 
 Before production or commercial deployment, the following areas require particular attention:
 - **OAuth state validation:** Use a cryptographically secure, session-bound OAuth state value to protect the authorization flow against request forgery.
@@ -622,8 +622,13 @@ Contributions, bug reports, and suggestions are welcome.
 
 ---
 
+## 📧 Support
+For support, technical issues, or questions about the GitHub Developer Program integration, please contact us at: **support@orbivai.com**
+
+---
+
 ## 📄 License
-Review the repository's licensing status before redistributing or using CodePods commercially. A package-level license declaration does not necessarily establish a license for the entire repository. Add a clear root-level LICENSE file before inviting external contributions or distributing the project under an open-source license.
+Review the repository's licensing status before redistributing or using OrbiVAI commercially. A package-level license declaration does not necessarily establish a license for the entire repository. Add a clear root-level LICENSE file before inviting external contributions or distributing the project under an open-source license.
 
 ---
 
@@ -633,4 +638,4 @@ Review the repository's licensing status before redistributing or using CodePods
 - **Portfolio:** [https://portfolio-komalgiri.onrender.com](https://portfolio-komalgiri.onrender.com/)
 - **LinkedIn:** [https://www.linkedin.com/in/komal-giri-52798a265/](https://www.linkedin.com/in/komal-giri-52798a265/)
 
-*CodePods — connect planning, code, and collaboration in one development workspace.*
+*OrbiVAI — connect planning, code, and collaboration in one development workspace.*

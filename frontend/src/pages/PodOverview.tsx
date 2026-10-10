@@ -694,97 +694,45 @@ const PodOverview = () => {
     };
 
     return (
-        <div className="min-h-screen bg-background text-text-primary font-sans selection:bg-primary selection:text-primary-foreground flex flex-col">
-            {/* Navbar */}
-            <nav className="border-b border-background-border/50 bg-background/50 backdrop-blur-sm sticky top-0 z-50 h-16 shrink-0">
-                <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
-                    <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/dashboard')}>
-                        <span className="text-xl font-bold tracking-tight">CodePodAI</span>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <NotificationDropdown />
-                        <div className="bg-background-surface/50 px-3 py-1.5 rounded-lg border border-background-border flex items-center gap-2 w-64">
-                            <svg className="w-4 h-4 text-text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                            <input type="text" placeholder="Search pods..." className="bg-transparent border-none outline-none text-sm w-full text-text-primary placeholder:text-text-secondary" />
+    return (
+        <div className="flex flex-col h-full bg-background text-text-primary font-sans relative">
+            <main className="flex-1 overflow-auto p-8 relative">
+                {/* Pod Header & Tabs */}
+                <header className="mb-8 border-b border-background-border/50 pb-0">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 rounded bg-gradient-to-br from-primary/20 to-ai-start/20 border border-primary/20 flex items-center justify-center text-primary font-bold text-xl shadow-sm">
+                            {pod?.name.charAt(0) || 'N'}
                         </div>
-                        <div
-                            className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-secondary cursor-pointer hover:ring-2 hover:ring-primary transition-all p-[1px]"
-                            onClick={() => navigate('/profile')}
-                        >
-                            <img
-                                src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex"
-                                alt="Profile"
-                                className="w-full h-full rounded-full bg-background-surface"
-                            />
+                        <div>
+                            <h1 className="text-xl font-bold text-text-primary">{pod?.name || 'Project'}</h1>
+                            <p className="text-[10px] font-bold text-text-secondary tracking-widest uppercase">Active Pod</p>
                         </div>
                     </div>
-                </div>
-            </nav>
-
-            <div className="flex flex-1 overflow-hidden">
-                {/* Sidebar */}
-                <aside className="w-64 border-r border-background-border bg-background-surface/80 backdrop-blur-xl flex flex-col relative">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/50 via-ai-start/50 to-primary/50 opacity-50"></div>
-
-                    <div className="p-6">
-                        <div className="flex items-center gap-3 mb-8 p-3 bg-background/40 rounded-xl border border-background-border/50 group transition-all duration-300 hover:border-primary/30">
-                            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary/20 to-ai-start/20 border border-primary/20 flex items-center justify-center shadow-lg shadow-black/20 group-hover:scale-105 transition-transform">
-                                <span className="font-bold text-primary text-xl drop-shadow-[0_0_8px_rgba(88,166,154,0.4)]">{pod?.name.charAt(0) || 'N'}</span>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <h2 className="text-sm font-bold text-text-primary truncate transition-colors group-hover:text-primary">{pod?.name || 'Project'}</h2>
-                                <p className="text-[10px] font-bold text-text-secondary uppercase tracking-widest opacity-70">Active Pod</p>
-                            </div>
-                        </div>
-
-                        <nav className="space-y-1.5">
-                            {sidebarItems.map((item) => {
-                                const isLocked = userStatus === 'pending' && item.id !== 'Overview';
-
-                                return (
-                                    <button
-                                        key={item.id}
-                                        onClick={() => !isLocked && setActiveTab(item.id)}
-                                        className={`w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 group relative overflow-hidden ${activeTab === item.id
-                                            ? 'bg-primary/10 text-primary border border-primary/30 shadow-[0_0_15px_rgba(88,166,154,0.1)]'
+                    <div className="flex gap-6">
+                        {sidebarItems.map((item) => {
+                            const isLocked = userStatus === 'pending' && item.id !== 'Overview';
+                            return (
+                                <button
+                                    key={item.id}
+                                    onClick={() => !isLocked && setActiveTab(item.id)}
+                                    className={`pb-3 text-sm font-medium transition-colors border-b-2 ${
+                                        activeTab === item.id 
+                                            ? 'border-primary text-primary' 
                                             : isLocked
-                                                ? 'text-text-secondary/30 cursor-not-allowed opacity-60 grayscale'
-                                                : 'text-text-secondary hover:text-primary hover:bg-primary/5 border border-transparent'
-                                            }`}
-                                    >
-                                        <div className="flex items-center gap-3">
-                                            <span className={`transition-transform duration-300 ${activeTab === item.id ? 'scale-110' : 'group-hover:scale-110'}`}>
-                                                {item.icon}
-                                            </span>
-                                            <span className="relative z-10">{item.label}</span>
-                                        </div>
-
-                                        {isLocked && (
-                                            <HiLockClosed className="w-3.5 h-3.5 text-text-secondary/50" />
-                                        )}
-
-                                        {activeTab === item.id && (
-                                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1/2 bg-primary rounded-r-full animate-in slide-in-from-left duration-300"></div>
-                                        )}
-                                    </button>
-                                );
-                            })}
-                        </nav>
+                                                ? 'border-transparent text-text-secondary/30 cursor-not-allowed'
+                                                : 'border-transparent text-text-secondary hover:text-text-primary'
+                                    }`}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        {item.icon}
+                                        {item.label}
+                                        {isLocked && <HiLockClosed className="w-3.5 h-3.5" />}
+                                    </div>
+                                </button>
+                            );
+                        })}
                     </div>
-
-                    <div className="mt-auto p-6 border-t border-background-border/50 bg-background/20">
-                        <button
-                            onClick={() => navigate('/dashboard')}
-                            className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-background-surface border border-background-border text-xs font-bold text-text-secondary hover:text-primary hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-black/20"
-                        >
-                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
-                            Exit Pod
-                        </button>
-                    </div>
-                </aside>
-
-                {/* Main Content Area */}
-                <main className="flex-1 overflow-auto bg-background p-8 relative">
+                </header>
                     {/* Toast Notification */}
                     {message && (
                         <div className={`fixed top-20 right-8 z-[100] px-6 py-3 rounded-xl border shadow-xl animate-in slide-in-from-right duration-300 flex items-center gap-3 ${message.type === 'success' ? 'bg-success/10 border-success/30 text-success' : 'bg-red-500/10 border-red-500/30 text-red-500'
@@ -844,7 +792,6 @@ const PodOverview = () => {
                         {renderContent()}
                     </div>
                 </main>
-            </div>
 
             {/* Modal - Link Repository */}
             {isRepoModalOpen && (

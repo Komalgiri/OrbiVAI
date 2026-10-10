@@ -9,14 +9,14 @@ module.exports = {
       colors: {
         // Background Colors
         background: {
-          DEFAULT: '#0D1117',     // Deep Background
-          surface: '#161B22',     // Surface/Card Gray
-          border: '#30363D',      // Border/Stroke
+          DEFAULT: '#F7F9FC',     // Canvas
+          surface: '#FFFFFF',     // Surface
+          border: '#E4E9F0',      // Border
         },
         // Primary Action
         primary: {
-          DEFAULT: '#58A69A',     // Electric Blue
-          dark: '#3D8B80',        // Darker shade for hover states
+          DEFAULT: '#315EFB',     // Primary
+          dark: '#234BD9',        // Darker shade for hover states
         },
         // AI Feature Gradient (used in components with bg-gradient-to-r from-ai-start to-ai-end)
         ai: {
@@ -28,8 +28,8 @@ module.exports = {
         warning: '#D29922',       // Warning/Urgent
         // Text Colors
         text: {
-          primary: '#E6EDF3',     // Primary Text
-          secondary: '#8B949E',   // Secondary Text
+          primary: '#182230',     // Primary Text
+          secondary: '#4A5568',   // Secondary Text
         },
       },
       // Custom Gradients

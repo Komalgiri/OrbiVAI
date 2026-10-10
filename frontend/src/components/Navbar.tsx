@@ -10,7 +10,7 @@ const Navbar = () => {
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className="fixed top-0 left-0 right-0 z-[100] border-b border-white/5 bg-[#0D1117]/60 backdrop-blur-xl"
+      className="fixed top-0 left-0 right-0 z-[100] border-b border-background-border bg-background-surface/80 backdrop-blur-xl"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         {/* Logo */}
@@ -21,8 +21,8 @@ const Navbar = () => {
           <div className="p-2 bg-primary/10 rounded-xl group-hover:scale-110 transition-transform duration-300">
             <HiOutlineCubeTransparent className="w-8 h-8 text-primary" />
           </div>
-          <span className="text-2xl font-black tracking-tighter text-white">
-            CodePodAI
+          <span className="text-2xl font-black tracking-tighter text-text-primary">
+            OrbiVAI
           </span>
         </div>
 

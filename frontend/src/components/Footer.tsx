@@ -20,22 +20,22 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-[#080b10] border-t border-white/5 pt-20 pb-10">
+    <footer className="bg-background border-t border-background-border pt-20 pb-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12 mb-16">
           {/* Brand Section */}
           <div className="col-span-2 lg:col-span-2">
             <div className="flex items-center gap-2 mb-6 pointer-events-none">
               <HiOutlineCubeTransparent className="w-8 h-8 text-primary" />
-              <span className="text-2xl font-black tracking-tighter text-white">CodePodAI</span>
+              <span className="text-2xl font-black tracking-tighter text-text-primary">OrbiVAI</span>
             </div>
             <p className="text-muted text-sm leading-relaxed max-w-xs mb-8">
               High-velocity orchestration for modern development teams.
-              Build, scale, and ship smarter with CodePodAI.
+              Build, scale, and ship smarter with OrbiVAI.
             </p>
             <div className="flex items-center gap-5">
               {[SiGithub, SiX, SiDiscord, SiLinkedin].map((Icon, idx) => (
-                <a key={idx} href="#" className="text-muted hover:text-white transition-colors">
+                <a key={idx} href="#" className="text-muted hover:text-text-primary transition-colors">
                   <Icon className="w-5 h-5" />
                 </a>
               ))}
@@ -45,7 +45,7 @@ const Footer = () => {
           {/* Link Sections */}
           {sections.map((section, idx) => (
             <div key={idx}>
-              <h3 className="text-white text-xs font-black uppercase tracking-[0.2em] mb-6">
+              <h3 className="text-text-primary text-xs font-black uppercase tracking-[0.2em] mb-6">
                 {section.title}
               </h3>
               <ul className="space-y-4">
@@ -62,13 +62,13 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="pt-10 border-t border-background-border flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-muted/60 text-xs font-bold tracking-widest uppercase">
-            © {currentYear} CodePodAI Inc. Crafted with precision for devs.
+            © {currentYear} OrbiVAI Inc. Crafted with precision for devs.
           </p>
           <div className="flex gap-8">
-            <a href="#" className="text-muted/60 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">Privacy Policy</a>
-            <a href="#" className="text-muted/60 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">Terms of Service</a>
+            <a href="#" className="text-muted/60 hover:text-text-primary text-xs font-bold uppercase tracking-widest transition-colors">Privacy Policy</a>
+            <a href="#" className="text-muted/60 hover:text-text-primary text-xs font-bold uppercase tracking-widest transition-colors">Terms of Service</a>
           </div>
         </div>
       </div>

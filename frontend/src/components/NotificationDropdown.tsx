@@ -35,9 +35,9 @@ const NotificationDropdown = () => {
 
     useEffect(() => {
         if (unreadCount > 0) {
-            document.title = `(${unreadCount}) CodePodAI`;
+            document.title = `(${unreadCount}) OrbiVAI`;
         } else {
-            document.title = 'CodePodAI';
+            document.title = 'OrbiVAI';
         }
     }, [unreadCount]);
 

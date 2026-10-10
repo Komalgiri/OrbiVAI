@@ -21,7 +21,7 @@ const Pricing = () => {
                         {/* Gradient Border Glow (Subtle hover only) */}
                         <div className="absolute -inset-1 bg-gradient-to-r from-primary to-ai-start rounded-[2.5rem] blur opacity-10 group-hover:opacity-40 transition duration-500" />
 
-                        <div className="relative bg-[#161b22] border border-white/10 rounded-[2.5rem] p-12 overflow-hidden shadow-2xl">
+                        <div className="relative bg-background-surface border border-background-border rounded-[2.5rem] p-12 overflow-hidden shadow-2xl">
                             {/* "Free" Badge */}
                             <div className="absolute top-8 right-8">
                                 <div className="px-4 py-2 bg-primary/20 border border-primary/50 text-primary rounded-full text-xs font-black uppercase tracking-widest flex items-center gap-2">
@@ -31,12 +31,12 @@ const Pricing = () => {
                             </div>
 
                             <div className="text-left mb-10">
-                                <h3 className="text-2xl font-black text-white mb-2 uppercase tracking-tighter">Community Edition</h3>
+                                <h3 className="text-2xl font-black text-text-primary mb-2 uppercase tracking-tighter">Community Edition</h3>
                                 <p className="text-muted text-sm font-medium">Everything you need to ship world-class pods.</p>
                             </div>
 
                             <div className="flex items-baseline gap-2 mb-10">
-                                <span className="text-6xl font-black text-white">$0</span>
+                                <span className="text-6xl font-black text-text-primary">$0</span>
                                 <span className="text-muted font-bold uppercase tracking-widest text-sm">/ Forever</span>
                             </div>
 
@@ -56,7 +56,7 @@ const Pricing = () => {
                                 ))}
                             </div>
 
-                            <button className="w-full py-5 bg-white text-black font-black rounded-2xl transition-all duration-300 hover:bg-primary hover:text-white uppercase tracking-widest text-xs">
+                            <button className="w-full py-5 bg-primary text-white font-black rounded-2xl transition-all duration-300 hover:opacity-90 uppercase tracking-widest text-xs">
                                 Start Shipping Free
                             </button>
                         </div>

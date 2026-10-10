@@ -27,7 +27,7 @@ const Integrations = () => {
   }, [isHovered]);
 
   return (
-    <section className="py-24 border-t border-white/5 bg-black/20" id="integrations">
+    <section className="py-24 border-t border-[#E4E9F0] bg-white" id="integrations">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0 }}

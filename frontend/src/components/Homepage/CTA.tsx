@@ -11,7 +11,7 @@ const CTA = () => {
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
-        className="relative overflow-hidden rounded-[3rem] bg-gradient-to-br from-[#161b22] to-[#0d1117] p-12 md:p-20 text-center border border-white/5"
+        className="relative overflow-hidden rounded-[3rem] bg-background-surface p-12 md:p-20 text-center border border-background-border shadow-xl"
       >
         {/* Decorative Glow */}
         <div className="absolute top-0 right-0 w-[50%] h-[50%] bg-primary/10 blur-[100px] -z-10 rounded-full" />
@@ -22,7 +22,7 @@ const CTA = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-primary text-xs font-bold uppercase tracking-widest mb-8"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/5 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest mb-8"
           >
             <HiSparkles className="w-4 h-4" />
             Limited Time Beta Access
@@ -37,7 +37,7 @@ const CTA = () => {
 
           <p className="text-muted text-lg md:text-xl mb-12 max-w-xl mx-auto leading-relaxed">
             Join 2,000+ top-tier devs shipping faster, smarter,
-            and more collaboratively with CodePodAI.
+            and more collaboratively with OrbiVAI.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -55,7 +55,7 @@ const CTA = () => {
         </div>
 
         {/* Grid Pattern Overlay */}
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+        <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(rgba(49, 94, 251, 1) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
       </motion.div>
     </section>
   );

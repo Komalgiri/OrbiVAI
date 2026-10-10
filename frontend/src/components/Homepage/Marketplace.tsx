@@ -29,7 +29,7 @@ const Marketplace = () => {
                         initial={{ opacity: 0, x: 20 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
-                        className="px-6 py-3 bg-white/5 border border-white/10 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-white/10 transition-colors flex items-center gap-2"
+                        className="px-6 py-3 bg-background-surface border border-background-border rounded-xl text-xs font-black uppercase tracking-widest hover:bg-primary/5 hover:border-primary/20 transition-colors flex items-center gap-2 text-text-primary"
                     >
                         Explore All Plugins
                         <HiArrowTopRightOnSquare className="w-4 h-4" />
@@ -44,13 +44,13 @@ const Marketplace = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: i * 0.1 }}
-                            className="p-8 rounded-[2.5rem] bg-[#161b22]/50 border border-white/5 hover:border-primary/20 hover:bg-[#161b22] transition-all group"
+                            className="p-8 rounded-[2.5rem] bg-background-surface border border-background-border hover:border-primary/20 hover:bg-primary/5 transition-all group"
                         >
                             <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
                                 <HiPuzzlePiece className="w-6 h-6" />
                             </div>
                             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 mb-2 block">{ext.category}</span>
-                            <h3 className="text-xl font-black text-white mb-4">{ext.name}</h3>
+                            <h3 className="text-xl font-black text-text-primary mb-4">{ext.name}</h3>
                             <p className="text-muted text-sm leading-relaxed mb-6">{ext.description}</p>
                             <button className="text-xs font-bold text-primary group-hover:underline flex items-center gap-1 uppercase tracking-widest">
                                 Learn More
