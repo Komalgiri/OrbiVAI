@@ -9,6 +9,11 @@
 </div>
 <br />
 
+<div align="center">
+  <img src="./frontend/src/assets/image.png" alt="OrbiVAI Interface" width="800" />
+</div>
+<br />
+
 > **From GitHub activity to AI-powered team execution.**
 
 OrbiVAI is an AI-assisted collaboration platform designed to help small engineering teams plan projects, organize development work, understand team activity, and turn progress into actionable insights.

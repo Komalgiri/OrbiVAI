@@ -694,7 +694,6 @@ const PodOverview = () => {
     };
 
     return (
-    return (
         <div className="flex flex-col h-full bg-background text-text-primary font-sans relative">
             <main className="flex-1 overflow-auto p-8 relative">
                 {/* Pod Header & Tabs */}
