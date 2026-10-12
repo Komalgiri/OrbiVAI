@@ -1,19 +1,36 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { podService } from '../services/podService';
+import { Code2, ChevronDown, GitCommitHorizontal, CircleCheck, Trophy } from 'lucide-react';
 import ExplorePodsModal from '../components/ExplorePodsModal';
 
 interface User {
     id: string;
     name: string;
     email: string;
+    githubId?: string;
 }
 
 interface Pod {
     id: string;
     name: string;
+    description: string;
     role: string;
     status: string;
+    progress?: number;
+    points?: number;
+    members?: any[];
+}
+
+function AvatarStack({ members }: { members: string[] }) {
+    if (!members || members.length === 0) return <div className="dash-avatar-stack"></div>;
+    return (
+        <div className="dash-avatar-stack" aria-label={`${members.length} pod members`}>
+            {members.slice(0, 3).map((member, index) => (
+                <span className={`dash-avatar avatar-${(index % 3) + 1}`} key={index}>{member}</span>
+            ))}
+        </div>
+    );
 }
 
 const UserDashboard = () => {
@@ -47,103 +64,143 @@ const UserDashboard = () => {
 
     if (!user) return null;
 
+    const dateOptions: Intl.DateTimeFormatOptions = { weekday: 'long', month: 'long', day: 'numeric' };
+    const todayStr = new Date().toLocaleDateString('en-US', dateOptions).toUpperCase();
+    const firstName = user.name ? user.name.split(' ')[0] : 'Builder';
+
+    // Mock Activity Feed (can be replaced with real backend data later)
+    const activity = [
+        { icon: GitCommitHorizontal, tone: 'sage', name: 'Sam Ortiz', action: 'committed to', target: 'feat/onboarding', detail: 'Add guided setup states', time: '8 min ago' },
+        { icon: CircleCheck, tone: 'amber', name: 'Olivia Chen', action: 'completed', target: 'Define launch narrative', detail: '+120 points earned', time: '2 hours ago' },
+        { icon: Trophy, tone: 'amber', name: 'Your Pod', action: 'unlocked', target: 'Momentum tier', detail: 'Team milestone reached', time: 'Yesterday' },
+    ];
+
     return (
-        <div className="flex flex-col h-full bg-background">
-            <header className="px-10 pt-12 pb-6">
-                <div className="text-[10px] font-bold text-text-secondary tracking-widest uppercase mb-2">
-                    Your Workspace
+        <>
+            <div className="dashboard-heading-row">
+                <div>
+                    <span className="section-label">{todayStr}</span>
+                    <h1>Good morning, {firstName}.</h1>
+                    <p>Here's what's moving across your Pods.</p>
                 </div>
-                <h1 className="text-2xl font-semibold text-text-primary mb-1">
-                    Good morning
-                </h1>
-                <p className="text-sm text-text-secondary">
-                    Here's what's happening across your Pods.
-                </p>
-            </header>
-
-            <div className="px-10 pb-10">
-                <div className="grid grid-cols-4 gap-4 mb-10">
-                    <div className="p-4 border border-background-border rounded-lg bg-background-surface">
-                        <div className="text-xs font-medium text-text-secondary mb-1">Pods</div>
-                        <div className="text-2xl text-text-primary">—</div>
-                    </div>
-                    <div className="p-4 border border-background-border rounded-lg bg-background-surface">
-                        <div className="text-xs font-medium text-text-secondary mb-1">Open tasks</div>
-                        <div className="text-2xl text-text-primary">—</div>
-                    </div>
-                    <div className="p-4 border border-background-border rounded-lg bg-background-surface">
-                        <div className="text-xs font-medium text-text-secondary mb-1">In progress</div>
-                        <div className="text-2xl text-text-primary">—</div>
-                    </div>
-                    <div className="p-4 border border-background-border rounded-lg bg-background-surface">
-                        <div className="text-xs font-medium text-text-secondary mb-1">Completed</div>
-                        <div className="text-2xl text-text-primary">—</div>
-                    </div>
-                </div>
-
-                <div className="mb-6 flex items-center justify-between">
-                    <h2 className="text-sm font-semibold text-text-primary">Recent Pods</h2>
-                    <div className="flex gap-3">
-                        <button 
-                            onClick={() => setIsExploreModalOpen(true)}
-                            className="text-xs font-medium text-text-secondary hover:text-text-primary transition-colors"
-                        >
-                            Explore Pods
-                        </button>
-                        <button 
-                            onClick={() => navigate('/create-pod')}
-                            className="text-xs font-medium bg-primary text-white px-3 py-1.5 rounded hover:opacity-90 transition-opacity"
-                        >
-                            Create Pod
-                        </button>
-                    </div>
-                </div>
-
-                {pods.length === 0 ? (
-                    <div className="border border-background-border border-dashed rounded-lg p-10 flex flex-col items-center justify-center text-center">
-                        <div className="text-sm text-text-primary font-medium mb-1">No active pods</div>
-                        <p className="text-xs text-text-secondary max-w-sm mb-4">
-                            You aren't participating in any Pods yet. Create a new workspace or explore existing ones.
-                        </p>
-                        <button
-                            onClick={() => navigate('/create-pod')}
-                            className="text-xs font-medium bg-primary text-white px-4 py-2 rounded hover:opacity-90 transition-opacity"
-                        >
-                            Create Workspace
-                        </button>
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {pods.map(pod => (
-                            <div 
-                                key={pod.id}
-                                onClick={() => navigate(`/pod/${pod.id}`)}
-                                className="group p-4 rounded-lg border border-background-border bg-background-surface hover:border-primary/50 cursor-pointer transition-all"
-                            >
-                                <div className="flex items-center justify-between mb-2">
-                                    <h3 className="text-sm font-semibold text-text-primary">{pod.name}</h3>
-                                    {pod.status === 'pending' && (
-                                        <span className="text-[10px] bg-orange-500/10 text-orange-600 px-2 py-0.5 rounded font-medium">
-                                            Invited
-                                        </span>
-                                    )}
-                                </div>
-                                <div className="text-xs text-text-secondary capitalize mb-4">
-                                    Role: {pod.role}
-                                </div>
-                                <div className="pt-3 border-t border-background-border/50 flex items-center justify-between">
-                                    <span className="text-[10px] text-text-secondary group-hover:text-primary transition-colors">
-                                        Open workspace →
-                                    </span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                {!user.githubId && (
+                    <button className="v0-button dashboard-action" onClick={() => navigate('/auth?mode=connect_github')}>
+                        <Code2 /> Connect GitHub
+                    </button>
                 )}
             </div>
-            
+
+            <div className="dashboard-summary">
+                <div>
+                    <span>Active pods</span>
+                    <strong>{pods.length}</strong>
+                    <small><span className="summary-up">Live</span> now</small>
+                </div>
+                <div>
+                    <span>Tasks in progress</span>
+                    <strong>—</strong>
+                    <small>Loading...</small>
+                </div>
+                <div>
+                    <span>Total points</span>
+                    <strong>0</strong>
+                    <small>Keep building</small>
+                </div>
+                <div>
+                    <span>Pod rank</span>
+                    <strong>—</strong>
+                    <small>Join a pod to rank</small>
+                </div>
+            </div>
+
+            <div className="dashboard-section-heading">
+                <div>
+                    <span className="section-label">YOUR WORKSPACES</span>
+                    <h2>Active Pods</h2>
+                </div>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    <button className="text-link" style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px' }} onClick={() => setIsExploreModalOpen(true)}>Explore</button>
+                    <Link className="text-link" to="/create-pod">Create New <span>→</span></Link>
+                </div>
+            </div>
+
+            {pods.length === 0 ? (
+                <div style={{ border: '1px dashed var(--line)', padding: '50px', textAlign: 'center', borderRadius: '12px', marginTop: '20px' }}>
+                    <p style={{ color: 'var(--muted-text)', fontSize: '14px', marginBottom: '15px' }}>You aren't participating in any Pods yet.</p>
+                    <button className="v0-button" onClick={() => navigate('/create-pod')}>Create Workspace</button>
+                </div>
+            ) : (
+                <div className="pods-grid" id="pods">
+                    {pods.map((pod) => (
+                        <article className="pod-card" key={pod.id} onClick={() => navigate(`/pod/${pod.id}`)} style={{ cursor: 'pointer' }}>
+                            <div className="pod-card-top">
+                                <div className="pod-icon"><Code2 /></div>
+                                <button className="pod-more" aria-label={`More options for ${pod.name}`}>•••</button>
+                            </div>
+                            <span className="pod-kicker" style={{ color: pod.status === 'pending' ? 'var(--amber)' : 'var(--sage-dark)' }}>
+                                {pod.status === 'pending' ? 'INVITED' : 'ACTIVE POD'}
+                            </span>
+                            <h3>{pod.name}</h3>
+                            <p style={{ minHeight: '30px' }}>{pod.description || 'No description provided.'}</p>
+                            
+                            <div className="pod-progress-meta">
+                                <span>Progress</span>
+                                <strong>{pod.progress || 0}%</strong>
+                            </div>
+                            <div className="pod-progress">
+                                <span style={{ width: `${pod.progress || 0}%` }} />
+                            </div>
+                            
+                            <div className="pod-card-footer">
+                                <AvatarStack members={pod.members?.map(m => m.user?.name ? m.user.name.split(' ').map((n: string) => n[0]).join('') : 'U') || ['U']} />
+                                <span className="points-badge">+{pod.points || 0} pts</span>
+                            </div>
+                        </article>
+                    ))}
+                </div>
+            )}
+
+            <div className="dashboard-lower-grid" id="activity">
+                <section className="activity-panel">
+                    <div className="dashboard-section-heading">
+                        <div>
+                            <span className="section-label">LIVE FROM YOUR PODS</span>
+                            <h2>Recent activity</h2>
+                        </div>
+                        <button className="panel-filter">All activity <ChevronDown /></button>
+                    </div>
+                    <div className="activity-list">
+                        {activity.map((item, idx) => { 
+                            const Icon = item.icon; 
+                            return (
+                                <div className="activity-item" key={idx}>
+                                    <div className={`activity-type ${item.tone}`}><Icon /></div>
+                                    <div className="activity-copy">
+                                        <p><strong>{item.name}</strong> {item.action} <b>{item.target}</b></p>
+                                        <span>{item.detail}</span>
+                                    </div>
+                                    <time>{item.time}</time>
+                                </div>
+                            )
+                        })}
+                    </div>
+                </section>
+                
+                <aside className="points-panel" id="rewards">
+                    <div className="points-panel-orbit"><Trophy /></div>
+                    <span className="section-label">YOUR REWARDS</span>
+                    <h2>Keep the<br /><em>momentum.</em></h2>
+                    <p>Earn points by committing code and completing tasks.</p>
+                    <div className="tier-progress">
+                        <div><span>Starter</span><strong>0 / 100</strong></div>
+                        <div className="pod-progress"><span style={{ width: '0%' }} /></div>
+                    </div>
+                    <Link className="text-link" to="#">Explore rewards <span>→</span></Link>
+                </aside>
+            </div>
+
             <ExplorePodsModal isOpen={isExploreModalOpen} onClose={() => setIsExploreModalOpen(false)} />
-        </div>
+        </>
     );
 };
 
