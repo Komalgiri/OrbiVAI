@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { podService, type Pod } from '../services/podService';
 import { HiOutlineUserGroup, HiOutlinePlus } from 'react-icons/hi2';
+import { FaBrain, FaCheck } from 'react-icons/fa6';
 
 const ExplorePods = () => {
     const [pods, setPods] = useState<(Pod & { memberCount: number; userStatus: string | null })[]>([]);
@@ -76,9 +77,14 @@ const ExplorePods = () => {
                         </div>
 
                         <h3 className="text-xl font-bold text-text-primary mb-2">{pod.name}</h3>
-                        <p className="text-sm text-text-secondary mb-4 line-clamp-2 min-h-[40px]">
+                        <p className="text-sm text-text-secondary mb-3 line-clamp-2 min-h-[40px]">
                             {pod.description || "No description provided."}
                         </p>
+
+                        <div className="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-600 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded mb-3 w-fit">
+                            <FaBrain className="w-3 h-3" />
+                            <span>1-Click DNA Application Enabled</span>
+                        </div>
 
                         <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
                             <div className="text-xs text-text-secondary font-mono">

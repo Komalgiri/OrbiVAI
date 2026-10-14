@@ -3,6 +3,7 @@ import {
   fetchUserRepos,
   fetchRepoCommits,
   syncGitHubActivity,
+  fetchDeveloperIntelligenceData,
 } from "../services/githubService.js";
 import { decrypt, isEncrypted } from "../utils/encryption.js";
 
@@ -212,6 +213,68 @@ export const analyzeProfile = async (req, res) => {
     res.json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+// GET /api/github/analytics/:username? - Get deep developer intelligence
+export const getDeveloperIntelligence = async (req, res) => {
+  try {
+    let targetUsername = req.params.username;
+    let userToken = null;
+    let currentUserId = req.user?.id;
+
+    // If authenticated, we might have their token or find their username
+    if (currentUserId) {
+      const user = await prisma.user.findUnique({
+        where: { id: currentUserId },
+        select: { githubToken: true, githubUsername: true, githubId: true }
+      });
+
+      if (user?.githubToken) {
+        userToken = decryptToken(user.githubToken);
+      }
+
+      if (!targetUsername) {
+        targetUsername = user?.githubUsername || user?.githubId;
+      }
+    }
+
+    if (!targetUsername) {
+      return res.status(400).json({
+        error: "GitHub username parameter is required or user must have linked GitHub account"
+      });
+    }
+
+    // Clean username (trim and remove any @ prefix)
+    targetUsername = targetUsername.trim().replace(/^@/, "");
+
+    const intelligence = await fetchDeveloperIntelligenceData(targetUsername, userToken);
+
+    // If viewing own profile and logged in, update DB profile state
+    if (currentUserId && intelligence) {
+      try {
+        const topStack = (intelligence.languageDistribution || []).map(l => l.name);
+        await prisma.user.update({
+          where: { id: currentUserId },
+          data: {
+            inferredRole: intelligence.aiIntelligence?.archetype || "Developer",
+            techStack: topStack.slice(0, 10),
+            reliabilityScore: intelligence.metrics?.developerScore || 75.0,
+            dynamicsMetrics: intelligence
+          }
+        });
+      } catch (saveErr) {
+        console.warn("[ANALYTICS] Could not persist analytics cache to user:", saveErr.message);
+      }
+    }
+
+    return res.status(200).json(intelligence);
+  } catch (error) {
+    console.error("Error in getDeveloperIntelligence:", error.message);
+    const statusCode = error.response?.status === 404 ? 404 : 500;
+    return res.status(statusCode).json({
+      error: error.response?.data?.message || error.message || "Failed to analyze GitHub profile"
+    });
   }
 };
 

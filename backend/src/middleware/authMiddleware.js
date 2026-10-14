@@ -15,6 +15,23 @@ export const authMiddleware = (req, res, next) => {
   }
 };
 
+export const optionalAuthMiddleware = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (!token) {
+    return next();
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+  } catch (err) {
+    // Gracefully ignore expired or invalid tokens for public queries
+  }
+  next();
+};
+
 export const requireGitHub = (req, res, next) => {
   // authMiddleware must run first to populate req.user
   if (!req.user || !req.user.githubId) {

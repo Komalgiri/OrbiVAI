@@ -1,9 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { podService, type Pod, type PodStats } from '../services/podService';
-import { Code2, CircleCheck, Sparkles, Activity } from 'lucide-react';
-import { FaGithub } from 'react-icons/fa';
+import {
+    FaGithub,
+    FaCode,
+    FaCircleCheck,
+    FaChartLine,
+    FaUserPlus,
+    FaBrain
+} from 'react-icons/fa6';
+import { HiOutlineSparkles } from 'react-icons/hi2';
 import GitHubActivity from './GitHubActivity';
+import { MemberDNAModal } from '../components/modals/MemberDNAModal';
+import { InviteMemberModal } from '../components/modals/InviteMemberModal';
 
 const PodOverview = () => {
     const navigate = useNavigate();
@@ -12,6 +21,8 @@ const PodOverview = () => {
     const [pod, setPod] = useState<Pod | null>(null);
     const [stats, setStats] = useState<PodStats | null>(null);
     const [loading, setLoading] = useState(true);
+    const [selectedMemberDNA, setSelectedMemberDNA] = useState<{ username: string; name: string } | null>(null);
+    const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
     const refreshData = async () => {
         if (!podId) return;
@@ -56,7 +67,7 @@ const PodOverview = () => {
                         <FaGithub style={{ width: '15px', marginRight: '5px' }} /> Sync GitHub
                     </button>
                     <button className="v0-button dashboard-action">
-                        <Sparkles style={{ width: '15px', marginRight: '5px' }} /> Generate AI Roadmap
+                        <HiOutlineSparkles style={{ width: '15px', marginRight: '5px' }} /> Generate AI Roadmap
                     </button>
                 </div>
             </div>
@@ -106,7 +117,7 @@ const PodOverview = () => {
                         </div>
                         <div className="activity-list" style={{ marginTop: '20px' }}>
                             <div className="activity-item">
-                                <div className="activity-type sage"><CircleCheck /></div>
+                                <div className="activity-type sage"><FaCircleCheck /></div>
                                 <div className="activity-copy">
                                     <p><strong>Phase 1: Project Initialization</strong></p>
                                     <span>Repository setup, linting, and CI/CD pipelines.</span>
@@ -114,7 +125,7 @@ const PodOverview = () => {
                                 <time>Completed</time>
                             </div>
                             <div className="activity-item" style={{ borderLeft: '2px solid var(--sage)', marginLeft: '14px', paddingLeft: '20px' }}>
-                                <div className="activity-type amber" style={{ marginLeft: '-36px' }}><Activity /></div>
+                                <div className="activity-type amber" style={{ marginLeft: '-36px' }}><FaChartLine /></div>
                                 <div className="activity-copy">
                                     <p><strong>Phase 2: Core Data Models</strong></p>
                                     <span>Prisma schema for Pods, Users, and Activity Sync.</span>
@@ -122,7 +133,7 @@ const PodOverview = () => {
                                 <time>In Progress</time>
                             </div>
                             <div className="activity-item" style={{ borderLeft: '2px solid #edf0ed', marginLeft: '14px', paddingLeft: '20px' }}>
-                                <div className="activity-type" style={{ marginLeft: '-36px', background: 'white', border: '1px solid var(--line)', color: 'var(--muted-text)' }}><Code2 /></div>
+                                <div className="activity-type" style={{ marginLeft: '-36px', background: 'white', border: '1px solid var(--line)', color: 'var(--muted-text)' }}><FaCode /></div>
                                 <div className="activity-copy">
                                     <p style={{ color: 'var(--muted-text)' }}><strong>Phase 3: Real-time Collaboration</strong></p>
                                     <span>WebSocket integration for live cursor tracking.</span>
@@ -142,7 +153,7 @@ const PodOverview = () => {
                         </div>
                         <div className="task-list" style={{ marginTop: '20px' }}>
                             <div className="task-row">
-                                <button className="task-check"><CircleCheck /></button>
+                                <button className="task-check"><FaCircleCheck /></button>
                                 <div className="task-copy">
                                     <strong>Setup PostgreSQL database</strong>
                                     <span>Assigned to Alex Morgan</span>
@@ -150,7 +161,7 @@ const PodOverview = () => {
                                 <div className="priority high">High</div>
                             </div>
                             <div className="task-row">
-                                <button className="task-check" style={{ color: 'var(--line)' }}><CircleCheck /></button>
+                                <button className="task-check" style={{ color: 'var(--line)' }}><FaCircleCheck /></button>
                                 <div className="task-copy">
                                     <strong>Implement GitHub OAuth flow</strong>
                                     <span>Assigned to Sam Ortiz</span>
@@ -158,7 +169,7 @@ const PodOverview = () => {
                                 <div className="priority medium">Medium</div>
                             </div>
                             <div className="task-row">
-                                <button className="task-check" style={{ color: 'var(--line)' }}><CircleCheck /></button>
+                                <button className="task-check" style={{ color: 'var(--line)' }}><FaCircleCheck /></button>
                                 <div className="task-copy">
                                     <strong>Design system tokens migration</strong>
                                     <span>Assigned to Olivia Chen</span>
@@ -178,24 +189,219 @@ const PodOverview = () => {
 
             {activeTab === 'members' && (
                 <>
-                    <div className="members-heading">
+                    {/* 1. Pending Join Requests Review Section */}
+                    {pod.members?.some(m => m.status === 'requested' || m.status === 'pending') && (
+                        <div
+                            style={{
+                                background: '#fbfcf9',
+                                border: '1px solid #dbe6d9',
+                                borderRadius: '12px',
+                                padding: '24px',
+                                marginBottom: '32px',
+                                boxShadow: '0 8px 25px rgba(120, 155, 115, 0.08)'
+                            }}
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                                <HiOutlineSparkles style={{ color: 'var(--sage-dark)' }} />
+                                <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.12em', color: 'var(--sage-dark)' }}>
+                                    1-CLICK APPLICANT DOSSIER REVIEW
+                                </span>
+                            </div>
+                            <h2 style={{ margin: '0 0 6px', fontSize: '20px', letterSpacing: '-0.04em' }}>
+                                Pending Join Requests ({pod.members.filter(m => m.status === 'requested' || m.status === 'pending').length})
+                            </h2>
+                            <p style={{ margin: '0 0 18px', color: 'var(--muted-text)', fontSize: '12px' }}>
+                                Review developers requesting to join this pod. Inspect their live Technical DNA, Developer Score, and strengths before approving.
+                            </p>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '14px' }}>
+                                {pod.members.filter(m => m.status === 'requested' || m.status === 'pending').map((member, i) => {
+                                    const applicantUsername = member.user?.githubUsername || (member.user as any)?.githubId || member.user?.name || 'applicant';
+                                    return (
+                                        <div
+                                            key={member.id || i}
+                                            style={{
+                                                background: 'white',
+                                                border: '1px solid var(--line)',
+                                                borderRadius: '10px',
+                                                padding: '16px',
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                justifyContent: 'space-between'
+                                            }}
+                                        >
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                                                <div className={`member-avatar avatar-${(i % 3) + 1}`} style={{ width: '36px', height: '36px', fontSize: '12px' }}>
+                                                    {member.user?.name ? member.user.name.split(' ').map((n: string) => n.charAt(0)).join('') : 'A'}
+                                                </div>
+                                                <div style={{ minWidth: 0 }}>
+                                                    <strong style={{ fontSize: '14px', display: 'block', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                                                        {member.user?.name || 'Applicant'}
+                                                    </strong>
+                                                    <span style={{ fontSize: '11px', color: '#88948b' }}>@{applicantUsername}</span>
+                                                </div>
+                                            </div>
+
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--soft)', padding: '6px 10px', borderRadius: '6px', marginBottom: '12px', fontSize: '11px' }}>
+                                                <span style={{ color: 'var(--muted-text)' }}>Role / Archetype</span>
+                                                <strong style={{ color: 'var(--sage-dark)' }}>{member.user?.inferredRole || 'Developer'}</strong>
+                                            </div>
+
+                                            {/* Action Bar */}
+                                            <div style={{ display: 'flex', gap: '8px' }}>
+                                                <button
+                                                    onClick={() => setSelectedMemberDNA({
+                                                        username: applicantUsername,
+                                                        name: member.user?.name || 'Applicant'
+                                                    })}
+                                                    style={{
+                                                        flex: 1,
+                                                        border: '1px solid var(--line)',
+                                                        background: '#f8faf7',
+                                                        borderRadius: '6px',
+                                                        padding: '7px 8px',
+                                                        fontSize: '11px',
+                                                        fontWeight: 700,
+                                                        color: 'var(--sage-dark)',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        gap: '5px',
+                                                        cursor: 'pointer'
+                                                    }}
+                                                >
+                                                    <FaBrain /> Inspect DNA
+                                                </button>
+                                                <button
+                                                    onClick={async () => {
+                                                        try {
+                                                            await podService.respondToInvite(podId!, 'accepted', member.userId);
+                                                            refreshData();
+                                                        } catch (e: any) {
+                                                            alert(e?.message || 'Failed to accept request');
+                                                        }
+                                                    }}
+                                                    className="v0-button dashboard-action"
+                                                    style={{ padding: '7px 12px', fontSize: '11px', background: 'var(--sage)', cursor: 'pointer' }}
+                                                >
+                                                    Accept
+                                                </button>
+                                                <button
+                                                    onClick={async () => {
+                                                        try {
+                                                            await podService.respondToInvite(podId!, 'rejected', member.userId);
+                                                            refreshData();
+                                                        } catch (e: any) {
+                                                            alert(e?.message || 'Failed to reject request');
+                                                        }
+                                                    }}
+                                                    style={{
+                                                        border: '1px solid var(--line)',
+                                                        background: 'white',
+                                                        borderRadius: '6px',
+                                                        padding: '7px 10px',
+                                                        fontSize: '11px',
+                                                        color: 'var(--muted-text)',
+                                                        cursor: 'pointer'
+                                                    }}
+                                                >
+                                                    Decline
+                                                </button>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* 2. Active Pod Members Directory */}
+                    <div className="members-heading" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
                             <span className="section-label">TEAM DIRECTORY</span>
-                            <h2>Pod Members</h2>
+                            <h2>Active Pod Members</h2>
                         </div>
+                        <button
+                            onClick={() => setIsInviteModalOpen(true)}
+                            className="v0-button dashboard-action"
+                            style={{ fontSize: '12px', padding: '9px 16px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+                        >
+                            <FaUserPlus /> Invite Member
+                        </button>
                     </div>
                     <div className="members-grid" style={{ marginTop: '20px' }}>
-                        {pod.members?.map((member, i) => (
-                            <div className="member-card" key={member.id || i}>
-                                <div className={`member-avatar avatar-${(i % 3) + 1}`}>{member.user?.name ? member.user.name.split(' ').map((n: string) => n.charAt(0)).join('') : 'U'}</div>
-                                <button className="member-more">•••</button>
-                                <h3>{member.user?.name || 'User'}</h3>
-                                <p>@{member.user?.githubId || 'github'}</p>
-                                <span className="member-pod">{member.role}</span>
-                            </div>
-                        ))}
+                        {pod.members?.filter(m => m.status === 'accepted').map((member, i) => {
+                            const memberUsername = member.user?.githubUsername || (member.user as any)?.githubId || member.user?.name || 'developer';
+                            return (
+                                <div className="member-card" key={member.id || i} style={{ display: 'flex', flexDirection: 'column' }}>
+                                    <div className={`member-avatar avatar-${(i % 3) + 1}`}>
+                                        {member.user?.name ? member.user.name.split(' ').map((n: string) => n.charAt(0)).join('') : 'U'}
+                                    </div>
+                                    <button className="member-more">•••</button>
+                                    <h3>{member.user?.name || 'User'}</h3>
+                                    <p>@{memberUsername}</p>
+                                    <span className="member-pod">{member.role}</span>
+
+                                    {/* AI Technical DNA Inspect Button */}
+                                    <button
+                                        onClick={() => setSelectedMemberDNA({
+                                            username: memberUsername,
+                                            name: member.user?.name || 'Pod Member'
+                                        })}
+                                        style={{
+                                            marginTop: '14px',
+                                            border: '1px solid var(--line)',
+                                            background: '#f8faf7',
+                                            borderRadius: '6px',
+                                            padding: '8px 10px',
+                                            fontSize: '11px',
+                                            fontWeight: 700,
+                                            color: 'var(--sage-dark)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            gap: '6px',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.background = '#edf4eb';
+                                            e.currentTarget.style.borderColor = 'var(--sage)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.background = '#f8faf7';
+                                            e.currentTarget.style.borderColor = 'var(--line)';
+                                        }}
+                                    >
+                                        <FaBrain style={{ fontSize: '12px' }} /> Inspect DNA
+                                    </button>
+                                </div>
+                            );
+                        })}
                     </div>
                 </>
+            )}
+
+            {/* Member DNA Inspect Modal */}
+            {selectedMemberDNA && (
+                <MemberDNAModal
+                    isOpen={!!selectedMemberDNA}
+                    onClose={() => setSelectedMemberDNA(null)}
+                    username={selectedMemberDNA.username}
+                    memberName={selectedMemberDNA.name}
+                />
+            )}
+
+            {/* Invite Member Modal */}
+            {isInviteModalOpen && pod && (
+                <InviteMemberModal
+                    isOpen={isInviteModalOpen}
+                    onClose={() => setIsInviteModalOpen(false)}
+                    podId={pod.id}
+                    podName={pod.name}
+                    podDescription={pod.description || ''}
+                    onMemberAdded={() => refreshData()}
+                />
             )}
         </>
     );

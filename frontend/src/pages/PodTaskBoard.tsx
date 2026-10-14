@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { podService, type Task } from '../services/podService';
 import { aiService, type TaskSuggestion } from '../services/aiService';
+import { FaBrain, FaUserCheck } from 'react-icons/fa6';
+import { HiOutlineSparkles } from 'react-icons/hi2';
 
 // Type definition for task categories
 type ColumnType = 'todo' | 'inProgress' | 'completed';
@@ -251,6 +253,12 @@ const PodTaskBoard = () => {
                                         </span>
                                     </div>
                                     <h4 className="text-sm font-bold text-text-primary mb-1">{suggestion.title}</h4>
+                                    {suggestion.assignee && (
+                                        <div className="flex items-center gap-1.5 text-[10px] text-emerald-600 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full w-fit mb-2 font-semibold">
+                                            <FaBrain className="text-[10px]" />
+                                            <span>Best Fit: {suggestion.assignee} (Technical DNA Synergy)</span>
+                                        </div>
+                                    )}
                                     <p className="text-xs text-text-secondary mb-4 flex-1">{suggestion.description}</p>
                                     <button
                                         onClick={() => handleAddAISuggestion(suggestion)}

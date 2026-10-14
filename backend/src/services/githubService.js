@@ -1133,3 +1133,247 @@ export const fetchPRChanges = async (accessToken, owner, repo, number) => {
     return { additions: 0, deletions: 0, changedFiles: 0 };
   }
 };
+
+/**
+ * Fetch and synthesize deep GitHub Analytics & Technical DNA Intelligence
+ * @param {string} username - GitHub username to analyze
+ * @param {string} accessToken - Optional GitHub access token for higher rate limits
+ * @returns {Promise<object>} Complete developer intelligence dossier
+ */
+export const fetchDeveloperIntelligenceData = async (username, accessToken = null) => {
+  try {
+    const headers = {
+      Accept: "application/vnd.github.v3+json",
+      "User-Agent": "CodePods-Analytics-Engine"
+    };
+    if (accessToken) {
+      headers.Authorization = `Bearer ${accessToken}`;
+    }
+
+    // 1. Fetch GitHub user profile
+    const userRes = await axios.get(`https://api.github.com/users/${encodeURIComponent(username)}`, { headers });
+    const user = userRes.data;
+
+    // 2. Fetch public repositories
+    const reposRes = await axios.get(
+      `https://api.github.com/users/${encodeURIComponent(username)}/repos?per_page=100&sort=updated`,
+      { headers }
+    );
+    const repos = reposRes.data || [];
+
+    // 3. Quantitative metrics
+    const yearsActive = Math.max(0.1, ((Date.now() - new Date(user.created_at).getTime()) / (1000 * 60 * 60 * 24 * 365.25))).toFixed(1);
+    const sourceRepos = repos.filter(r => !r.fork);
+    const forkedRepos = repos.filter(r => r.fork);
+    const totalStars = repos.reduce((sum, r) => sum + (r.stargazers_count || 0), 0);
+    const starsPerRepo = (totalStars / Math.max(1, sourceRepos.length)).toFixed(1);
+    const totalForks = repos.reduce((sum, r) => sum + (r.forks_count || 0), 0);
+
+    // 4. Language Distribution & Bytes Aggregation
+    const languageMap = {};
+    const topActiveRepos = [...sourceRepos]
+      .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+      .slice(0, 6);
+
+    for (const repo of topActiveRepos) {
+      if (repo.languages_url) {
+        try {
+          const langRes = await axios.get(repo.languages_url, { headers, timeout: 4000 });
+          Object.entries(langRes.data || {}).forEach(([lang, bytes]) => {
+            languageMap[lang] = (languageMap[lang] || 0) + bytes;
+          });
+        } catch {
+          if (repo.language) {
+            languageMap[repo.language] = (languageMap[repo.language] || 0) + 30000;
+          }
+        }
+      } else if (repo.language) {
+        languageMap[repo.language] = (languageMap[repo.language] || 0) + 30000;
+      }
+    }
+
+    // Remaining source repos
+    const sampledIds = new Set(topActiveRepos.map(r => r.id));
+    sourceRepos.forEach(repo => {
+      if (!sampledIds.has(repo.id) && repo.language) {
+        languageMap[repo.language] = (languageMap[repo.language] || 0) + 15000;
+      }
+    });
+
+    const totalBytes = Object.values(languageMap).reduce((a, b) => a + b, 0) || 1;
+    const languageColors = {
+      JavaScript: "#f1e05a",
+      TypeScript: "#3178c6",
+      Python: "#3572A5",
+      HTML: "#e34c26",
+      CSS: "#563d7c",
+      Dart: "#00B4AB",
+      Java: "#b07219",
+      Go: "#00ADD8",
+      Rust: "#dea584",
+      Kotlin: "#A97BFF",
+      Swift: "#F05138",
+      PHP: "#4F5D95",
+      Shell: "#89e051",
+      Vue: "#41b883",
+      C: "#555555",
+      "C++": "#f34b7d",
+      "C#": "#178600"
+    };
+
+    const languageDistribution = Object.entries(languageMap)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 6)
+      .map(([name, bytes]) => ({
+        name,
+        bytes,
+        percentage: Math.max(1, Math.round((bytes / totalBytes) * 100)),
+        color: languageColors[name] || "#789b73"
+      }));
+
+    // Normalize percentages to 100%
+    const currentSum = languageDistribution.reduce((acc, item) => acc + item.percentage, 0);
+    if (languageDistribution.length > 0 && currentSum !== 100) {
+      languageDistribution[0].percentage += (100 - currentSum);
+    }
+
+    // 5. Project Scale & Impact Classification
+    const notableProjects = [...sourceRepos]
+      .sort((a, b) => (b.stargazers_count * 3 + (b.size || 0) / 100) - (a.stargazers_count * 3 + (a.size || 0) / 100))
+      .slice(0, 4)
+      .map(r => ({
+        name: r.name,
+        description: r.description || "Public source project with active commit history.",
+        stars: r.stargazers_count || 0,
+        forks: r.forks_count || 0,
+        language: r.language || "TypeScript",
+        url: r.html_url,
+        updatedAt: r.updated_at
+      }));
+
+    // 6. Deterministic Developer Score (0 - 100)
+    const tenureScore = Math.min(20, parseFloat(yearsActive) * 4.5);
+    const originalityRatio = sourceRepos.length / Math.max(1, repos.length);
+    const volumeScore = Math.min(30, originalityRatio * 20 + Math.min(10, sourceRepos.length * 0.4));
+    const tractionScore = Math.min(25, (totalStars * 1.5) + (totalForks * 2) + Math.min(10, (user.followers || 0) * 1.2));
+    const stackBreadthScore = Math.min(25, languageDistribution.length * 4.5);
+    const rawScore = Math.round(tenureScore + volumeScore + tractionScore + stackBreadthScore);
+    const developerScore = Math.max(15, Math.min(99, rawScore));
+
+    // 7. Gemini AI Intelligence Synthesis
+    let aiIntelligence = null;
+    const apiKey = process.env.GEMINI_API_KEY;
+
+    if (apiKey) {
+      try {
+        const topLangs = languageDistribution.map(l => `${l.name} (${l.percentage}%)`).join(", ");
+        const repoSamples = notableProjects.map(p => `- ${p.name} (${p.language}): ${p.description}`).join("\n");
+
+        const prompt = `
+You are an elite Silicon Valley AI Technical Recruiter & Codebase DNA Analyst.
+Analyze this GitHub developer and generate a technical DNA profile in strictly valid JSON format.
+
+DEVELOPER DATA:
+Name: ${user.name || username}
+Username: ${username}
+Bio: ${user.bio || "Software Engineer & Builder"}
+Location: ${user.location || "Remote"}
+Years Active: ${yearsActive}
+Developer Score: ${developerScore}/100
+Source Repos: ${sourceRepos.length} | Forks: ${forkedRepos.length}
+Total Stars: ${totalStars} | Followers: ${user.followers}
+Language Distribution: ${topLangs}
+Representative Projects:
+${repoSamples}
+
+Respond ONLY with valid JSON using this EXACT schema:
+{
+  "archetype": "string (e.g. 'The Pragmatic Full-Stack Builder', 'The Product Engineer', 'The AI Solutions Pioneer')",
+  "archetypeSummary": "string (1 concise punchy sentence defining their engineering ethos)",
+  "technicalStrength": "string (2-3 detailed sentences on architectural strengths, core technologies, and execution velocity)",
+  "careerTrajectory": "string (2 sentences predicting their next career step and seniority readiness)",
+  "strategicGrowthTips": [
+    "string (Actionable tip 1, e.g. 'Refine codebase documentation with architecture diagrams.')",
+    "string (Actionable tip 2, e.g. 'Explore emerging full-stack frameworks like Next.js 15 or Bun.')",
+    "string (Actionable tip 3, e.g. 'Contribute to high-visibility open-source repositories to scale community footprint.')"
+  ],
+  "recruiterOutlook": "string (Executive summary written for engineering leaders and hiring managers highlighting their standout traits, execution speed, and ideal team fit)"
+}
+`;
+
+        const geminiRes = await axios.post(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`,
+          { contents: [{ parts: [{ text: prompt }] }] },
+          { timeout: 9000 }
+        );
+
+        const responseText = geminiRes.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (responseText) {
+          const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            aiIntelligence = JSON.parse(jsonMatch[0]);
+          }
+        }
+      } catch (aiErr) {
+        console.warn("[ANALYTICS] Gemini AI generation error, using heuristic fallback:", aiErr.message);
+      }
+    }
+
+    // Heuristic Fallback if AI was unavailable or timed out
+    if (!aiIntelligence) {
+      const primaryLang = languageDistribution[0]?.name || "Full-Stack";
+      const secondaryLang = languageDistribution[1]?.name || "Modern Web";
+
+      aiIntelligence = {
+        archetype: `${primaryLang} & Product Builder`,
+        archetypeSummary: `Prolific builder with ${sourceRepos.length} source repositories and strong passion for ${primaryLang} and modern application design.`,
+        technicalStrength: `Demonstrated ability to architect complete applications with high execution velocity in ${primaryLang} and ${secondaryLang}. Shows consistent repository momentum with a strong ratio of original work.`,
+        careerTrajectory: `Maturing engineer positioned for rapid advancement into high-impact full-stack and product engineering roles within fast-moving tech ecosystems.`,
+        strategicGrowthTips: [
+          "Refine codebase documentation and add visual architecture workflows in READMEs.",
+          "Explore emerging micro-frameworks and modern edge runtime tooling.",
+          "Engage with niche open-source developer communities and submit PRs to large projects.",
+          "Integrate automated CI/CD testing workflows across production repositories."
+        ],
+        recruiterOutlook: `Practical, outcome-driven developer who thrives on shipping end-to-end features independently. Ideal candidate for agile development teams seeking builders who take initiative.`
+      };
+    }
+
+    return {
+      profile: {
+        username: user.login,
+        name: user.name || user.login,
+        avatarUrl: user.avatar_url,
+        bio: user.bio || "Mobile & Web Developer | React & Firebase Enthusiast | Solving Real-World Problems with AI & Innovation",
+        location: user.location || "Remote",
+        githubUrl: user.html_url,
+        yearsActive: `${yearsActive} Years Active`,
+        yearsActiveRaw: parseFloat(yearsActive)
+      },
+      metrics: {
+        developerScore,
+        totalStars,
+        starsPerRepo: `${starsPerRepo} Stars/Repo`,
+        totalRepos: repos.length,
+        sourceRepos: sourceRepos.length,
+        forkedRepos: forkedRepos.length,
+        repoSummary: `${repos.length} (${sourceRepos.length} Source / ${forkedRepos.length} Fork)`,
+        totalForks,
+        followers: user.followers || 0,
+        following: user.following || 0,
+        communityRatio: `${user.followers || 0} Followers / ${user.following || 0} Following`
+      },
+      languageDistribution,
+      projectScale: {
+        totalSource: sourceRepos.length,
+        totalForks: forkedRepos.length,
+        notableProjects
+      },
+      aiIntelligence,
+      analyzedAt: new Date().toISOString()
+    };
+  } catch (error) {
+    console.error(`Error generating intelligence for ${username}:`, error.message);
+    throw error;
+  }
+};

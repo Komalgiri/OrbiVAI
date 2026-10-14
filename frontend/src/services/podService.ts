@@ -233,10 +233,10 @@ export const podService = {
         });
     },
 
-    respondToInvite: async (podId: string, status: 'accepted' | 'rejected'): Promise<{ message: string }> => {
+    respondToInvite: async (podId: string, status: 'accepted' | 'rejected', targetUserId?: string): Promise<{ message: string }> => {
         return apiRequest<{ message: string }>(`pods/${podId}/join`, {
             method: 'POST',
-            body: { status },
+            body: { status, targetUserId },
             token: localStorage.getItem('token'),
         });
     },

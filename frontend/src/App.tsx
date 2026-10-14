@@ -8,6 +8,7 @@ import AuthCallback from "./pages/AuthCallback";
 import UserProfile from "./pages/UserProfile";
 import ExplorePods from "./pages/ExplorePods";
 import About from "./pages/About";
+import GitHubAnalyticsIntelligence from "./pages/GitHubAnalyticsIntelligence";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -18,6 +19,12 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
+
+        {/* Public & Shareable Developer Intelligence Dossiers */}
+        <Route path="/u/:username" element={<GitHubAnalyticsIntelligence />} />
+        <Route path="/intel/:username" element={<GitHubAnalyticsIntelligence />} />
+        <Route path="/analytics" element={<GitHubAnalyticsIntelligence />} />
+        <Route path="/analytics/:username" element={<GitHubAnalyticsIntelligence />} />
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>

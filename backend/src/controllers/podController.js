@@ -216,20 +216,36 @@ export const addMember = async (req, res) => {
       return res.status(404).json({ error: "Pod not found" });
     }
 
-    // Check if user exists
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
+    // Check if user exists by ID or GitHub username
+    let user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { id: userId },
+          { githubUsername: userId },
+          { githubId: userId },
+        ],
+      },
     });
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      // Auto-provision placeholder user profile for GitHub invitee
+      user = await prisma.user.create({
+        data: {
+          githubUsername: userId,
+          githubId: userId,
+          name: userId,
+          inferredRole: "Developer",
+        },
+      });
     }
+
+    const targetUserId = user.id;
 
     // Check if user is already a member
     const existingMember = await prisma.podMember.findUnique({
       where: {
         userId_podId: {
-          userId,
+          userId: targetUserId,
           podId,
         },
       },
@@ -242,7 +258,7 @@ export const addMember = async (req, res) => {
     // Add member
     const podMember = await prisma.podMember.create({
       data: {
-        userId,
+        userId: targetUserId,
         podId,
         role: role || "member",
         status: "pending", // Invite is pending
@@ -664,25 +680,38 @@ export const syncPodActivity = async (req, res) => {
 export const respondToInvite = async (req, res) => {
   try {
     const { id: podId } = req.params;
-    const { status } = req.body; // "accepted" or "rejected"
-    const userId = req.user.id;
+    const { status, targetUserId } = req.body; // "accepted" or "rejected"
+    const currentUserId = req.user.id;
 
     if (!["accepted", "rejected"].includes(status)) {
       return res.status(400).json({ error: "Invalid status. Use 'accepted' or 'rejected'." });
+    }
+
+    let targetMemberUserId = currentUserId;
+
+    if (targetUserId) {
+      // Admin responding to an applicant's join request
+      const adminCheck = await prisma.podMember.findUnique({
+        where: { userId_podId: { userId: currentUserId, podId } }
+      });
+      if (!adminCheck || (adminCheck.role !== "admin" && adminCheck.role !== "maintainer")) {
+        return res.status(403).json({ error: "Only pod admins and maintainers can review join requests." });
+      }
+      targetMemberUserId = targetUserId;
     }
 
     // Check membership
     const membership = await prisma.podMember.findUnique({
       where: {
         userId_podId: {
-          userId,
+          userId: targetMemberUserId,
           podId,
         },
       },
     });
 
     if (!membership) {
-      return res.status(404).json({ error: "Invitation not found." });
+      return res.status(404).json({ error: "Membership request not found." });
     }
 
     if (membership.status === "accepted") {
